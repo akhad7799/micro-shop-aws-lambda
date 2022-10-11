@@ -1,0 +1,1 @@
+# micro-shop-aws-lambda
