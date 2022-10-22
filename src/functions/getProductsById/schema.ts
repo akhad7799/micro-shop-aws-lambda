@@ -1,7 +1,7 @@
 export default {
-  type: "string",
+  type: 'string',
   params: {
-    productId: { type: 'string' }
+    productId: { type: 'string' },
   },
-  required: ['productId']
+  required: ['productId'],
 } as const;
