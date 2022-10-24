@@ -4,3 +4,9 @@ export type ProductModel = {
   title: string;
   price: number;
 };
+
+export type CreateProductModel = {
+  description?: string;
+  title: string;
+  price?: number;
+};
