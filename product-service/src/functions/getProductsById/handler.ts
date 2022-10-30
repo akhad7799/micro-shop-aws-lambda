@@ -1,6 +1,6 @@
-import type { ValidatedEventAPIGatewayProxyEvent } from '@libs/api-gateway';
-import { formatJSONResponse } from '@libs/api-gateway';
-import { products } from '../../data/data';
+import type { ValidatedEventAPIGatewayProxyEvent } from '../../libs/api-gateway';
+import { formatJSONResponse } from '../../libs/api-gateway';
+import { products } from '../../data/seeds/data';
 
 import schema from './schema';
 
