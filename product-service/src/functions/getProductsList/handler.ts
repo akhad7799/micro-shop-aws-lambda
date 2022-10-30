@@ -1,4 +1,4 @@
-import { formatJSONResponse } from '@libs/api-gateway';
+import { formatJSONResponse } from '../../libs/api-gateway';
 import { ProductsRepository, StocksRepository } from '../../data/repositories';
 
 const productRepository = new ProductsRepository();

@@ -9,6 +9,6 @@ jspm_packages
 .esbuild
 
 # idea
-.idea
+.idea/
 
 lib

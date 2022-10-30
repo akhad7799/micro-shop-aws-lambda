@@ -1,4 +1,4 @@
-import { formatJSONResponse } from '@libs/api-gateway';
+import { formatJSONResponse } from '../../libs/api-gateway';
 import { ProductsRepository } from '../../data/repositories';
 import { v4 as uuidv4 } from 'uuid';
 import { ProductModel } from '../../models';
