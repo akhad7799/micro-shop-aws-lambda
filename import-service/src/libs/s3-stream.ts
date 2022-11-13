@@ -7,6 +7,6 @@ export const processS3Stream = async (stream) => {
 			.pipe(csvParser())
 			.on('data', (data) => chunks.push(data))
 			.on('error', reject)
-			.on('end', () => resolve(chunks));
+			.on('end', () => resolve(JSON.stringify(chunks, null, 2)));
 	});
 };
