@@ -14,6 +14,8 @@ provider:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
     PRODUCTS_TABLE: Products-service-${self:provider.stage}
     STOCKS_TABLE: Stocks-service-${self:provider.stage}
+    ACCOUNT_ID: 959222269509
+    TOPIC_ARN: arn:aws:sns:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:productCreatedTopic
   iamRoleStatements:
     - Effect: Allow
       Action:
@@ -26,6 +28,14 @@ provider:
       Resource:
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.PRODUCTS_TABLE}"
         - "arn:aws:dynamodb:${self:provider.region}:*:table/${self:provider.environment.STOCKS_TABLE}"
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:catalogItemsQueue
+    - Effect: Allow
+      Action:
+        - sns:*
+      Resource: arn:aws:sns:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:productCreatedTopic
 
 package:
   individually: true
@@ -52,8 +62,15 @@ functions:
           path: /products
           method: post
           cors: true
+  catalogBatchProcess:
+    handler: src/functions/index.catalogBatchProcess
+    events:
+      - sqs:
+          arn: arn:aws:sqs:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:catalogItemsQueue
+          batchSize: 5
 plugins:
   - serverless-esbuild
+  - serverless-offline-sqs
   - serverless-offline
 
 resources:
@@ -88,6 +105,24 @@ resources:
         ProvisionedThroughput:
           ReadCapacityUnits: 2
           WriteCapacityUnits: 2
+    CatalogItemsQueue:
+      Type: "AWS::SQS::Queue"
+      Properties:
+        QueueName: catalogItemsQueue
+    ProductCreatedTopic:
+      Type: AWS::SNS::Topic
+      Properties:
+        TopicName: productCreatedTopic
+        Subscription:
+          - Endpoint: akhadyulchiev@gmail.com
+            Protocol: email
+    ProductCreatedTopicSubscription:
+      Type: AWS::SNS::Subscription
+      Properties:
+        Endpoint: akhadyulchiev@gmail.com
+        Protocol: email
+        TopicArn:
+          Ref: ProductCreatedTopic
 
 custom:
   esbuild:
@@ -98,6 +133,14 @@ custom:
     target: "node16"
     platform: node
     concurrency: 10
+#  serverless-offline-sqs:
+#    autoCreate: true
+#    apiVersion: '2012-11-05'
+#    endpoint: http://localhost:9324
+#    region: ${self:provider.region}
+#    accessKeyId: local
+#    secretAccessKey: local
+#    skipCacheInvalidation: false
   serverless_offline:
     allowCache: true
     noTimeout: true

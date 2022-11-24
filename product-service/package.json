@@ -11,8 +11,10 @@
     "node": ">=14.15.0"
   },
   "dependencies": {
+    "@aws-sdk/client-sns": "^3.209.0",
     "@middy/http-json-body-parser": "^2.5.3",
     "joi": "^17.6.4",
+    "serverless-offline-sqs": "^7.3.1",
     "uuid": "^9.0.0"
   },
   "devDependencies": {

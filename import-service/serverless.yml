@@ -12,11 +12,16 @@ provider:
     shouldStartNameWithService: true
   environment:
     AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+    ACCOUNT_ID: 959222269509
   iamRoleStatements:
     - Effect: Allow
       Action: 's3:*'
       Resource:
-        - 'arn:aws:s3:::import-service-files/*'
+        - arn:aws:s3:::import-service-files/*
+    - Effect: Allow
+      Action:
+        - sqs:*
+      Resource: arn:aws:sqs:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:catalogItemsQueue
 
 package:
   individually: true
@@ -40,6 +45,7 @@ functions:
           existing: true
 plugins:
   - serverless-esbuild
+  - serverless-offline-sqs
   - serverless-offline
 
 custom:
@@ -51,6 +57,15 @@ custom:
     target: "node16"
     platform: node
     concurrency: 10
+  serverless-offline-sqs:
+    autoCreate: true
+    apiVersion: '2012-11-05'
+    endpoint: http://localhost:9324
+    region: ${self:provider.region}
+    accessKeyId: local
+    secretAccessKey: local
+    skipCacheInvalidation: false
+
   serverless_offline:
     allowCache: true
     noTimeout: true

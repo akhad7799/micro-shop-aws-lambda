@@ -8,7 +8,7 @@ const productRepository = new ProductsRepository();
 const stockRepository = new StocksRepository();
 
 export const createProduct = async (event) => {
-  console.log(`Create product executed. Body: ${JSON.stringify(event.body)}`);
+  console.log(`Create product executed. Body: ${event.body}`);
   try {
     const { title, description, price, count } = JSON.parse(event.body);
     const product: ProductModel = {
@@ -35,6 +35,7 @@ export const createProduct = async (event) => {
       ...productData,
       count: stockData.count,
     };
+    console.log('response', responseData);
 
     return formatJSONResponse(responseData, 200);
   } catch (err) {
