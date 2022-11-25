@@ -34,6 +34,12 @@ functions:
           path: /import
           method: get
           cors: true
+          authorizer:
+            name: basicAuthorizerTest
+            arn: arn:aws:lambda:${self:provider.region}:${self:provider.environment.ACCOUNT_ID}:function:auth-service-dev-basicAuthorizer
+            resultTtlInSeconds: 0
+            identitySource: method.request.header.Authorization
+            type: token
   importFileParser:
     handler: src/functions/index.importFileParser
     events:
@@ -47,6 +53,18 @@ plugins:
   - serverless-esbuild
   - serverless-offline-sqs
   - serverless-offline
+
+resources:
+  Resources:
+    GatewayResponseDefault4XX:
+      Type: 'AWS::ApiGateway::GatewayResponse'
+      Properties:
+        ResponseParameters:
+          gatewayresponse.header.Access-Control-Allow-Origin: "'*'"
+          gatewayresponse.header.Access-Control-Allow-Headers: "'*'"
+        ResponseType: DEFAULT_4XX
+        RestApiId:
+          Ref: 'ApiGatewayRestApi'
 
 custom:
   esbuild:
@@ -65,7 +83,6 @@ custom:
     accessKeyId: local
     secretAccessKey: local
     skipCacheInvalidation: false
-
   serverless_offline:
     allowCache: true
     noTimeout: true

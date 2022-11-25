@@ -1,0 +1,48 @@
+service: auth-service
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: dev
+  region: eu-central-1
+  apiGateway:
+    minimumCompressionSize: 1024
+    shouldStartNameWithService: true
+  environment:
+    AWS_NODEJS_CONNECTION_REUSE_ENABLED: "1"
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - execute-api:Invoke
+      Resource:
+        - '*'
+
+package:
+  individually: true
+
+functions:
+  basicAuthorizer:
+    handler: src/functions/index.basicAuthorizer
+
+plugins:
+  - serverless-esbuild
+  - serverless-dotenv-plugin
+  - serverless-offline
+
+custom:
+  esbuild:
+    bundle: true
+    minify: false
+    sourcemap: true
+    exclude: ["aws-sdk"]
+    target: "node16"
+    platform: node
+    concurrency: 10
+
+  serverless_offline:
+    allowCache: true
+    noTimeout: true
+    httpPort: 3000
+    lambdaPort: 3002
